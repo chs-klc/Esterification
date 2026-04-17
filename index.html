@@ -848,20 +848,31 @@
                     positions[i*3] += vels[i].x; // wiggle x
                     positions[i*3+2] += vels[i].z; // wiggle z
                     
-                    // Keep particles within flask boundaries
+                    const y = positions[i*3+1];
                     const radius = Math.sqrt(positions[i*3]**2 + positions[i*3+2]**2);
-                    if (radius > 1.5) {
+                    
+                    // Constrain particles based on height
+                    let maxRadius;
+                    if (y < 1.5) {
+                        // In flask belly - wider radius
+                        maxRadius = 1.5;
+                    } else {
+                        // In neck/condenser - narrow to tube radius
+                        maxRadius = 0.25;
+                    }
+                    
+                    if (radius > maxRadius) {
                         const angle = Math.atan2(positions[i*3+2], positions[i*3]);
-                        positions[i*3] = 1.4 * Math.cos(angle);
-                        positions[i*3+2] = 1.4 * Math.sin(angle);
+                        positions[i*3] = (maxRadius * 0.9) * Math.cos(angle);
+                        positions[i*3+2] = (maxRadius * 0.9) * Math.sin(angle);
                     }
                     
                     // Condensation logic (if water is on, vapor condenses at condenser. If off, it escapes)
-                    let resetHeight = state.waterOn ? 3.5 : 10;
+                    let resetHeight = state.waterOn ? 5 : 10;
                     
                     if(positions[i*3+1] > resetHeight) {
                         // Reset to bottom of flask with random position
-                        positions[i*3+1] = -1.5;
+                        positions[i*3+1] = -0.5;
                         const newAngle = Math.random() * Math.PI * 2;
                         const newRadius = Math.random() * 1.2;
                         positions[i*3] = newRadius * Math.cos(newAngle);
@@ -869,8 +880,8 @@
                     }
                     
                     // Keep particles from going too low (below liquid level)
-                    if(positions[i*3+1] < -1.7) {
-                        positions[i*3+1] = -1.7;
+                    if(positions[i*3+1] < -0.5) {
+                        positions[i*3+1] = -0.5;
                     }
                 }
                 bubbles.geometry.attributes.position.needsUpdate = true;
