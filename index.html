@@ -604,13 +604,15 @@
             camera.position.set(0, 5, 20);
 
             // Setup Renderer
-            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
             renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
             renderer.shadowMap.enabled = true;
+            renderer.sortObjects = true; // Ensure proper transparency sorting
             canvasContainer.appendChild(renderer.domElement);
 
             // Lights
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
             scene.add(ambientLight);
 
             const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
@@ -622,12 +624,20 @@
             backLight.position.set(-5, 5, -5);
             scene.add(backLight);
 
+            // Point light near flask for nice highlights
+            const pointLight = new THREE.PointLight(0xaaddff, 0.4, 20);
+            pointLight.position.set(2, 3, 4);
+            scene.add(pointLight);
+
             // --- Materials ---
-            const glassMaterial = new THREE.MeshPhysicalMaterial({
-                color: 0xffffff, transmission: 0.9, opacity: 1, metalness: 0.1, roughness: 0.1, ior: 1.5, thickness: 0.5, transparent: true
+            const glassMaterial = new THREE.MeshStandardMaterial({
+                color: 0xaaccee, transparent: true, opacity: 0.25,
+                roughness: 0.05, metalness: 0.1, side: THREE.DoubleSide,
+                depthWrite: false
             });
-            const liquidMaterial = new THREE.MeshBasicMaterial({
-                color: 0x4499ff, transparent: true, opacity: 0.7, side: THREE.DoubleSide
+            const liquidMaterial = new THREE.MeshStandardMaterial({
+                color: 0x4499ff, transparent: true, opacity: 0.75,
+                roughness: 0.3, metalness: 0.0, side: THREE.DoubleSide
             });
             const heaterMaterial = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.8 });
             const hotplateMaterial = new THREE.MeshStandardMaterial({ color: 0x111827 });
@@ -649,34 +659,46 @@
             heater.add(plate);
             scene.add(heater);
 
-            // 2. Pear-shaped flask (approximated)
+            // 2. Pear-shaped flask - use wireframe overlay for glass outline effect
             flask = new THREE.Group();
             
             const bellyGeo = new THREE.SphereGeometry(2, 32, 32);
             const belly = new THREE.Mesh(bellyGeo, glassMaterial);
             belly.position.y = 0;
+            // Add a subtle edge wireframe for glass visibility
+            const bellyEdge = new THREE.Mesh(bellyGeo, new THREE.MeshBasicMaterial({
+                color: 0x88bbdd, wireframe: true, transparent: true, opacity: 0.08
+            }));
+            bellyEdge.position.y = 0;
             
             const neckGeo = new THREE.CylinderGeometry(0.5, 0.8, 2, 32);
             const neck = new THREE.Mesh(neckGeo, glassMaterial);
             neck.position.y = 2.5;
             
             flask.add(belly);
+            flask.add(bellyEdge);
             flask.add(neck);
             scene.add(flask);
 
-            // Liquid Level (initially hidden/small)
-            // Use a full sphere - renders correctly from every angle
+            // Liquid - rendered BEFORE glass (added to flask first so it draws first)
+            // Use a simple flattened sphere with depthWrite enabled so it's always visible
             liquid = new THREE.Group();
             
-            const liquidSphereGeo = new THREE.SphereGeometry(1.7, 32, 32);
-            const liquidSphere = new THREE.Mesh(liquidSphereGeo, liquidMaterial);
-            liquidSphere.scale.y = 0.6; // Flatten into disc/puddle shape
-            liquidSphere.position.y = -0.4; // Sit in bottom of flask
-            liquid.add(liquidSphere);
+            const liquidGeo = new THREE.SphereGeometry(1.7, 32, 32);
+            const liquidMesh = new THREE.Mesh(liquidGeo, liquidMaterial);
+            liquidMesh.scale.y = 0.55;
+            liquidMesh.position.y = -0.5;
+            liquid.add(liquidMesh);
             
-            liquid.position.y = -0.3;
-            liquid.visible = false; // Start hidden
+            liquid.position.y = 0;
+            liquid.visible = false;
+            liquid.renderOrder = 0; // Render liquid first
             flask.add(liquid);
+            
+            // Set glass renderOrder higher so it draws on top
+            belly.renderOrder = 1;
+            bellyEdge.renderOrder = 2;
+            neck.renderOrder = 1;
 
             // Anti-bumping granules (hidden initially)
             granulesGroup = new THREE.Group();
@@ -694,21 +716,23 @@
             
             // Inner tube
             const innerTubeGeo = new THREE.CylinderGeometry(0.3, 0.3, 6, 16);
-            const innerTube = new THREE.Mesh(innerTubeGeo, glassMaterial);
+            const innerTube = new THREE.Mesh(innerTubeGeo, glassMaterial.clone());
             
             // Outer water jacket
             const jacketGeo = new THREE.CylinderGeometry(0.8, 0.8, 4.5, 16);
-            const jacket = new THREE.Mesh(jacketGeo, new THREE.MeshPhysicalMaterial({
-                color: 0x93c5fd, transmission: 0.7, opacity: 0.4, transparent: true
-            }));
+            const jacketMat = new THREE.MeshStandardMaterial({
+                color: 0x93c5fd, transparent: true, opacity: 0.25,
+                roughness: 0.05, side: THREE.DoubleSide, depthWrite: false
+            });
+            const jacket = new THREE.Mesh(jacketGeo, jacketMat);
             
             // Inlet/Outlet
             const portGeo = new THREE.CylinderGeometry(0.15, 0.15, 1, 16);
-            const portIn = new THREE.Mesh(portGeo, glassMaterial);
+            const portIn = new THREE.Mesh(portGeo, glassMaterial.clone());
             portIn.rotation.z = Math.PI / 2;
             portIn.position.set(0.8, -1.8, 0);
             
-            const portOut = new THREE.Mesh(portGeo, glassMaterial);
+            const portOut = new THREE.Mesh(portGeo, glassMaterial.clone());
             portOut.rotation.z = Math.PI / 2;
             portOut.position.set(-0.8, 1.8, 0);
 
