@@ -29,8 +29,8 @@
 
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; }
-        .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
-        .tab-content.active { display: block; }
+        .tab-content { display: none !important; animation: fadeIn 0.3s ease-in-out; }
+        .tab-content.active { display: block !important; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         #canvas-container { width: 100%; height: 500px; border-radius: 0.5rem; overflow: hidden; position: relative; }
         .glass-panel { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
@@ -143,7 +143,8 @@
         </section>
 
         <!-- Tab: 3D Virtual Lab -->
-        <section id="lab" class="tab-content h-full flex flex-col">
+        <section id="lab" class="tab-content">
+            <div class="h-full flex flex-col">
             <h2 class="text-3xl font-bold mb-4 border-b-2 border-blue-200 pb-2 text-blue-800">3D Virtual Lab: Heating Under Reflux</h2>
             
             <div class="flex-1 flex flex-col lg:flex-row gap-4 h-full min-h-0">
@@ -198,6 +199,7 @@
                 input:checked + .slider { background-color: #3b82f6; }
                 input:checked + .slider:before { transform: translateX(16px); }
             </style>
+            </div>
         </section>
 
         <!-- Tab: Flowchart -->
