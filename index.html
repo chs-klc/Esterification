@@ -574,7 +574,7 @@
 
         // --- Three.js 3D Virtual Lab Logic ---
         let scene, camera, renderer;
-        let flask, condenser, heater, liquid, bubbles;
+        let flask, condenser, heater, liquid, bubbles, drips;
         let animationId;
         
         // Lab State
@@ -765,6 +765,33 @@
             bubbles.userData = { velocities: pVelocities };
             flask.add(bubbles);
 
+            // Dripping particles (condensed vapor falling back)
+            const dripCount = 30;
+            const dripsGeo = new THREE.BufferGeometry();
+            const dPositions = new Float32Array(dripCount * 3);
+            const dVelocities = [];
+
+            for(let i=0; i<dripCount; i++) {
+                // Start in condenser area
+                const angle = Math.random() * Math.PI * 2;
+                const radius = Math.random() * 0.2;
+                dPositions[i*3] = radius * Math.cos(angle);
+                dPositions[i*3+1] = 4 + Math.random() * 2; // In condenser
+                dPositions[i*3+2] = radius * Math.sin(angle);
+                dVelocities.push({
+                    y: -(Math.random() * 0.08 + 0.05), // Fall speed
+                    delay: Math.random() * 100 // Stagger the drips
+                });
+            }
+            dripsGeo.setAttribute('position', new THREE.BufferAttribute(dPositions, 3));
+            
+            const dripMat = new THREE.PointsMaterial({
+                color: 0x88ccff, size: 0.2, transparent: true, opacity: 0
+            });
+            drips = new THREE.Points(dripsGeo, dripMat);
+            drips.userData = { velocities: dVelocities, frame: 0 };
+            flask.add(drips);
+
             // Interaction state vars
             let isDragging = false;
             let previousMousePosition = { x: 0, y: 0 };
@@ -900,6 +927,48 @@
                     liquid.children.forEach(child => {
                         child.material.color.setRGB(r/255, g/255, b/255);
                     });
+                }
+                
+                // Dripping animation (when condenser water is on)
+                if (state.waterOn) {
+                    drips.material.opacity = 0.8;
+                    drips.userData.frame++;
+                    
+                    const dPositions = drips.geometry.attributes.position.array;
+                    const dVels = drips.userData.velocities;
+                    
+                    for(let i=0; i<30; i++) {
+                        // Only move if past delay
+                        if (drips.userData.frame > dVels[i].delay) {
+                            dPositions[i*3+1] += dVels[i].y; // Fall down
+                            
+                            // Add slight wobble
+                            dPositions[i*3] += (Math.random() - 0.5) * 0.01;
+                            dPositions[i*3+2] += (Math.random() - 0.5) * 0.01;
+                            
+                            // Keep within tube radius
+                            const radius = Math.sqrt(dPositions[i*3]**2 + dPositions[i*3+2]**2);
+                            if (radius > 0.25) {
+                                const angle = Math.atan2(dPositions[i*3+2], dPositions[i*3]);
+                                dPositions[i*3] = 0.2 * Math.cos(angle);
+                                dPositions[i*3+2] = 0.2 * Math.sin(angle);
+                            }
+                            
+                            // Reset when reaching liquid surface
+                            if (dPositions[i*3+1] < 0) {
+                                // Reset to top of condenser
+                                dPositions[i*3+1] = 4 + Math.random() * 2;
+                                const newAngle = Math.random() * Math.PI * 2;
+                                const newRadius = Math.random() * 0.2;
+                                dPositions[i*3] = newRadius * Math.cos(newAngle);
+                                dPositions[i*3+2] = newRadius * Math.sin(newAngle);
+                                dVels[i].delay = drips.userData.frame + Math.random() * 30;
+                            }
+                        }
+                    }
+                    drips.geometry.attributes.position.needsUpdate = true;
+                } else {
+                    drips.material.opacity = 0;
                 }
             } else {
                 bubbles.material.opacity = 0;
