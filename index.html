@@ -665,10 +665,10 @@
             scene.add(flask);
 
             // Liquid Level (initially hidden/small)
-            // Create bottom hemisphere: thetaStart=PI/2 (equator), thetaLength=PI/2 (to bottom)
-            const liqGeo = new THREE.SphereGeometry(1.85, 32, 16, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2);
+            // Use a full sphere positioned low - looks consistent from all angles
+            const liqGeo = new THREE.SphereGeometry(1.6, 32, 32);
             liquid = new THREE.Mesh(liqGeo, liquidMaterial);
-            liquid.position.y = -0.2; // Position slightly lower
+            liquid.position.y = -0.8; // Position low so it appears as liquid at bottom
             liquid.visible = false; // Start hidden
             flask.add(liquid);
 
@@ -890,12 +890,13 @@
             liquid.material.color.setHex(0x4499ff); // Bright blue
             liquid.material.opacity = 0;
             liquid.visible = true;
-            liquid.scale.set(1, 0.01, 1); // Start flat
+            liquid.scale.set(0.01, 0.01, 0.01); // Start tiny
             
             let progress = 0;
             const fillInterval = setInterval(() => {
                 progress += 0.05;
-                liquid.scale.set(1, Math.min(1, progress), 1); // Grow upward
+                const scale = Math.min(1, progress);
+                liquid.scale.set(scale, scale, scale); // Grow uniformly
                 liquid.material.opacity = Math.min(0.7, progress * 0.7);
                 if(progress >= 1) clearInterval(fillInterval);
             }, 40);
