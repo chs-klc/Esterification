@@ -665,37 +665,28 @@
             scene.add(flask);
 
             // Liquid Level (initially hidden/small)
-            // Create liquid as a lathe geometry (bowl shape) - looks correct from all angles
+            // Create liquid as a proper solid hemisphere shape
             liquid = new THREE.Group();
             
-            // Create bowl profile points for lathe geometry
-            const bowlPoints = [];
-            const segments = 20;
             const bowlRadius = 1.7;
             const bowlDepth = 1.2;
             
-            // Create curved bottom (quarter circle) + straight sides
-            for (let i = 0; i <= segments; i++) {
-                const t = i / segments;
-                if (t <= 0.7) {
-                    // Curved bottom portion (semicircle)
-                    const angle = (t / 0.7) * Math.PI / 2;
-                    const x = Math.sin(angle) * bowlRadius;
-                    const y = -Math.cos(angle) * bowlDepth;
-                    bowlPoints.push(new THREE.Vector2(x, y));
-                } else {
-                    // Straight side going up
-                    const x = bowlRadius;
-                    const y = -bowlDepth + (t - 0.7) / 0.3 * bowlDepth;
-                    bowlPoints.push(new THREE.Vector2(x, y));
-                }
-            }
+            // Use SphereGeometry for bottom hemisphere - proper solid look
+            // Parameters: radius, widthSegments, heightSegments, phiStart, phiLength, thetaStart, thetaLength
+            const hemisphereGeo = new THREE.SphereGeometry(
+                bowlRadius,  // radius
+                32,          // width segments
+                16,          // height segments  
+                0,           // phiStart
+                Math.PI * 2, // phiLength (full circle)
+                Math.PI / 2, // thetaStart (start from equator)
+                Math.PI / 2  // thetaLength (go to bottom pole)
+            );
+            const hemisphereMesh = new THREE.Mesh(hemisphereGeo, liquidMaterial);
+            hemisphereMesh.scale.y = bowlDepth / bowlRadius; // Flatten slightly
+            liquid.add(hemisphereMesh);
             
-            const bowlGeo = new THREE.LatheGeometry(bowlPoints, 32);
-            const bowlMesh = new THREE.Mesh(bowlGeo, liquidMaterial);
-            liquid.add(bowlMesh);
-            
-            // Flat top disc (liquid surface)
+            // Flat top disc (liquid surface) - closes the top
             const discGeo = new THREE.CircleGeometry(bowlRadius, 32);
             const discMesh = new THREE.Mesh(discGeo, liquidMaterial);
             discMesh.rotation.x = -Math.PI / 2; // Face up
