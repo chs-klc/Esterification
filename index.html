@@ -626,8 +626,8 @@
             const glassMaterial = new THREE.MeshPhysicalMaterial({
                 color: 0xffffff, transmission: 0.9, opacity: 1, metalness: 0.1, roughness: 0.1, ior: 1.5, thickness: 0.5, transparent: true
             });
-            const liquidMaterial = new THREE.MeshPhysicalMaterial({
-                color: 0xadd8e6, transmission: 0.3, opacity: 0.95, transparent: true, roughness: 0.3, metalness: 0.05, emissive: 0x2a5a7a, emissiveIntensity: 0.1
+            const liquidMaterial = new THREE.MeshStandardMaterial({
+                color: 0x88ccff, transparent: true, opacity: 0.8, roughness: 0.2, metalness: 0.1, side: THREE.DoubleSide
             });
             const heaterMaterial = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.8 });
             const hotplateMaterial = new THREE.MeshStandardMaterial({ color: 0x111827 });
@@ -866,12 +866,12 @@
                     state.reactionProgress += 0.001;
                     if(state.reactionProgress > 1) state.reactionProgress = 1;
                     
-                    // Liquid color changes from light blue to yellow (ester formation)
+                    // Liquid color changes from current to yellow-orange (ester formation)
                     const progress = state.reactionProgress;
-                    // Start: light blue (0xe0f0ff), End: yellow-orange (0xffe680)
-                    const r = 0xe0 + (0xff - 0xe0) * progress;
-                    const g = 0xf0 + (0xe6 - 0xf0) * progress;
-                    const b = 0xff + (0x80 - 0xff) * progress;
+                    // Start: light blue (0x88ccff), End: yellow-orange (0xffdd66)
+                    const r = 0x88 + (0xff - 0x88) * progress;
+                    const g = 0xcc + (0xdd - 0xcc) * progress;
+                    const b = 0xff + (0x66 - 0xff) * progress;
                     liquid.material.color.setRGB(r/255, g/255, b/255);
                 }
             } else {
@@ -886,8 +886,7 @@
             state.reagentsAdded = true;
             
             // Animate liquid filling with visible color
-            liquid.material.color.setHex(0xadd8e6); // Light blue (more saturated)
-            liquid.material.emissive.setHex(0x2a5a7a); // Slight glow
+            liquid.material.color.setHex(0x88ccff); // Visible light blue
             liquid.material.opacity = 0;
             let scale = 0.01;
             let opacity = 0;
@@ -913,8 +912,7 @@
             state.catalystAdded = true;
             
             // Visual effect: liquid becomes slightly more yellowish due to catalyst
-            liquid.material.color.setHex(0xfff8dc); // Cornsilk color (more yellow)
-            liquid.material.emissive.setHex(0x8b7355); // Warm glow
+            liquid.material.color.setHex(0xffee88); // Yellow tint
             
             e.target.disabled = true;
             e.target.innerHTML = '<i class="fa-solid fa-check mr-2"></i>Catalyst Added';
