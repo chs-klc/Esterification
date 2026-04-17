@@ -665,26 +665,32 @@
             scene.add(flask);
 
             // Liquid Level (initially hidden/small)
-            // Create liquid as a proper solid hemisphere shape
+            // Create liquid as a closed bowl using LatheGeometry (profile rotated around Y axis)
             liquid = new THREE.Group();
             
             const bowlRadius = 1.7;
-            const bowlDepth = 1.2;
+            const bowlDepth = 1.0;
             
-            // Use SphereGeometry for bottom hemisphere - proper solid look
-            // Parameters: radius, widthSegments, heightSegments, phiStart, phiLength, thetaStart, thetaLength
-            const hemisphereGeo = new THREE.SphereGeometry(
-                bowlRadius,  // radius
-                32,          // width segments
-                16,          // height segments  
-                0,           // phiStart
-                Math.PI * 2, // phiLength (full circle)
-                Math.PI / 2, // thetaStart (start from equator)
-                Math.PI / 2  // thetaLength (go to bottom pole)
-            );
-            const hemisphereMesh = new THREE.Mesh(hemisphereGeo, liquidMaterial);
-            hemisphereMesh.scale.y = bowlDepth / bowlRadius; // Flatten slightly
-            liquid.add(hemisphereMesh);
+            // Create bowl profile - MUST start from center (x=0) to close the bottom
+            const bowlPoints = [];
+            const segments = 16;
+            
+            // Start at center bottom point (this closes the bottom)
+            bowlPoints.push(new THREE.Vector2(0, -bowlDepth));
+            
+            // Curve up to the rim (quarter circle profile)
+            for (let i = 1; i <= segments; i++) {
+                const t = i / segments;
+                const angle = t * Math.PI / 2; // 0 to 90 degrees
+                const x = Math.sin(angle) * bowlRadius;
+                const y = -Math.cos(angle) * bowlDepth;
+                bowlPoints.push(new THREE.Vector2(x, y));
+            }
+            
+            // Create lathe geometry - rotate profile around Y axis
+            const bowlGeo = new THREE.LatheGeometry(bowlPoints, 32);
+            const bowlMesh = new THREE.Mesh(bowlGeo, liquidMaterial);
+            liquid.add(bowlMesh);
             
             // Flat top disc (liquid surface) - closes the top
             const discGeo = new THREE.CircleGeometry(bowlRadius, 32);
