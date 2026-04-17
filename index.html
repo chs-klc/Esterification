@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HKDSE Chemistry: Esterification (Topic 11)</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- MathJax for Chemical Equations -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['$$', '$$']],
+                packages: {'[+]': ['mhchem']}
+            },
+            loader: {load: ['[tex]/mhchem']}
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Three.js for 3D Virtual Lab -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; }
+        .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        #canvas-container { width: 100%; height: 500px; border-radius: 0.5rem; overflow: hidden; position: relative; }
+        .glass-panel { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
+        .btn-primary { background: #3b82f6; color: white; transition: all 0.2s; }
+        .btn-primary:hover { background: #2563eb; transform: translateY(-1px); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        
+        /* Flowchart Styles */
+        .timeline-container { position: relative; padding-left: 2rem; border-left: 4px solid #cbd5e1; margin-left: 1rem; }
+        .timeline-step { position: relative; margin-bottom: 2rem; }
+        .timeline-dot { position: absolute; left: -2.85rem; top: 0; width: 1.5rem; height: 1.5rem; background: #3b82f6; border-radius: 50%; border: 4px solid #f8fafc; }
+        
+        /* Micro-view Animation */
+        .molecule { transition: all 1s ease-in-out; }
+        .water-leaving { animation: leaveWater 2s forwards; }
+        @keyframes leaveWater { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(50px) scale(0.5); opacity: 0; } }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="text-slate-800 h-screen flex flex-col md:flex-row overflow-hidden">
+
+    <!-- Sidebar Navigation -->
+    <nav class="bg-slate-900 text-white w-full md:w-64 flex-shrink-0 md:h-full overflow-y-auto z-20 shadow-xl">
+        <div class="p-6">
+            <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-300">
+                <i class="fa-solid fa-flask text-blue-400 mr-2"></i>Esterification
+            </h1>
+            <p class="text-slate-400 text-sm mt-1">HKDSE Topic 11</p>
+        </div>
+        <ul class="flex md:flex-col px-2 pb-4 overflow-x-auto md:overflow-hidden gap-1">
+            <li><button onclick="openTab('concepts', this)" class="tab-btn active w-full text-left px-4 py-3 rounded-lg bg-blue-600 font-medium whitespace-nowrap"><i class="fa-solid fa-book-open w-6 text-center"></i> Concepts</button></li>
+            <li><button onclick="openTab('lab', this)" class="tab-btn w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-microscope w-6 text-center"></i> 3D Virtual Lab</button></li>
+            <li><button onclick="openTab('flowchart', this)" class="tab-btn w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-diagram-project w-6 text-center"></i> Flowchart</button></li>
+            <li><button onclick="openTab('exam', this)" class="tab-btn w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-pen-nib w-6 text-center"></i> Exam Challenge</button></li>
+            <li><button onclick="openTab('misconceptions', this)" class="tab-btn w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-triangle-exclamation w-6 text-center"></i> Misconceptions</button></li>
+            <li><button onclick="openTab('summary', this)" class="tab-btn w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-list-check w-6 text-center"></i> Summary</button></li>
+            <li><button onclick="openTab('quiz', this)" class="tab-btn w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 transition whitespace-nowrap"><i class="fa-solid fa-spell-check w-6 text-center"></i> Quiz</button></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 h-full overflow-y-auto p-4 md:p-8 relative">
+        
+        <!-- Tab: Concepts -->
+        <section id="concepts" class="tab-content active max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold mb-6 border-b-2 border-blue-200 pb-2 text-blue-800">Concepts: Synthesis of Esters</h2>
+            
+            <div class="glass-panel p-6 rounded-xl shadow-sm mb-6">
+                <h3 class="text-xl font-bold text-slate-800 mb-3"><i class="fa-solid fa-bullseye text-red-500 mr-2"></i>Aim & Principle</h3>
+                <p class="mb-4">Esterification is a condensation reaction where an <strong>alkanol</strong> reacts with an <strong>alkanoic acid</strong> to form an <strong>ester</strong> and <strong>water</strong>. It is a slow, reversible reaction.</p>
+                
+                <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 text-center text-lg mb-4">
+                    \(\text{Alkanoic Acid} + \text{Alkanol} \rightleftharpoons \text{Ester} + \text{Water}\)
+                </div>
+                
+                <h4 class="font-semibold text-slate-700 mt-4">Key Conditions:</h4>
+                <ul class="list-disc pl-6 space-y-2 mt-2">
+                    <li><strong>Heating under reflux:</strong> Speeds up the reaction without losing volatile organic reactants/products.</li>
+                    <li><strong>Concentrated Sulphuric Acid (\(\text{H}_2\text{SO}_4\)):</strong> Acts as a <em>catalyst</em> to speed up the reaction, and as a <em>dehydrating agent</em>. By removing water, it shifts the equilibrium position to the right (Le Chatelier's Principle), increasing the yield of the ester.</li>
+                </ul>
+            </div>
+
+            <div class="glass-panel p-6 rounded-xl shadow-sm mb-6">
+                <h3 class="text-xl font-bold text-slate-800 mb-3"><i class="fa-solid fa-tags text-green-500 mr-2"></i>Naming Esters (Nomenclature)</h3>
+                <p class="mb-2">Esters have a characteristic fruity smell. Their names consist of two parts:</p>
+                <ol class="list-decimal pl-6 space-y-1 mb-4">
+                    <li>The first part comes from the <strong>alkanol</strong> (ends in <em>-yl</em>).</li>
+                    <li>The second part comes from the <strong>alkanoic acid</strong> (ends in <em>-oate</em>).</li>
+                </ol>
+                <div class="bg-slate-100 p-4 rounded-lg overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b-2 border-slate-300">
+                                <th class="p-2">Alkanoic Acid</th>
+                                <th class="p-2">Alkanol</th>
+                                <th class="p-2">Ester Name</th>
+                                <th class="p-2">Equation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-slate-200">
+                                <td class="p-2">Ethanoic acid</td>
+                                <td class="p-2">Ethanol</td>
+                                <td class="p-2 font-bold text-blue-600">Ethyl ethanoate</td>
+                                <td class="p-2">\(\text{CH}_3\text{COOH} + \text{C}_2\text{H}_5\text{OH} \rightleftharpoons \text{CH}_3\text{COOC}_2\text{H}_5 + \text{H}_2\text{O}\)</td>
+                            </tr>
+                            <tr class="border-b border-slate-200">
+                                <td class="p-2">Methanoic acid</td>
+                                <td class="p-2">Propan-1-ol</td>
+                                <td class="p-2 font-bold text-blue-600">Propyl methanoate</td>
+                                <td class="p-2">\(\text{HCOOH} + \text{C}_3\text{H}_7\text{OH} \rightleftharpoons \text{HCOOC}_3\text{H}_7 + \text{H}_2\text{O}\)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="glass-panel p-6 rounded-xl shadow-sm">
+                 <h3 class="text-xl font-bold text-slate-800 mb-3"><i class="fa-solid fa-microscope text-purple-500 mr-2"></i>The Reaction Mechanism (Micro-view)</h3>
+                 <p class="mb-4">During esterification, a molecule of water is eliminated. Crucially, studies using isotopic labelling (Oxygen-18) prove that:</p>
+                 <ul class="list-disc pl-6 space-y-2 mb-4 bg-yellow-50 p-4 border-l-4 border-yellow-400 rounded-r-lg">
+                     <li>The <strong>-OH group</strong> is removed from the <strong>Alkanoic Acid</strong>.</li>
+                     <li>The <strong>-H atom</strong> is removed from the <strong>Alkanol</strong>.</li>
+                 </ul>
+            </div>
+        </section>
+
+        <!-- Tab: 3D Virtual Lab -->
+        <section id="lab" class="tab-content h-full flex flex-col">
+            <h2 class="text-3xl font-bold mb-4 border-b-2 border-blue-200 pb-2 text-blue-800">3D Virtual Lab: Heating Under Reflux</h2>
+            
+            <div class="flex-1 flex flex-col lg:flex-row gap-4 h-full min-h-0">
+                <!-- 3D Canvas -->
+                <div class="flex-grow rounded-xl shadow-inner border border-slate-300 bg-slate-800 relative overflow-hidden" id="canvas-container">
+                    <!-- Overlays -->
+                    <div id="loading-overlay" class="absolute inset-0 bg-slate-900 flex items-center justify-center text-white z-10">
+                        <i class="fa-solid fa-spinner fa-spin text-4xl mb-2"></i>
+                        <span class="block ml-3">Loading 3D Engine...</span>
+                    </div>
+                    <div class="absolute top-4 left-4 bg-black/50 text-white px-3 py-1 rounded text-sm z-10">
+                        Drag to rotate | Scroll to zoom
+                    </div>
+                    <div class="absolute top-4 right-4 bg-blue-600/90 text-white px-4 py-2 rounded-lg shadow-lg z-10 font-mono text-sm" id="temp-display">
+                        Temperature: 25°C
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="w-full lg:w-80 bg-white rounded-xl shadow-md border border-slate-200 p-5 flex flex-col gap-4 overflow-y-auto flex-shrink-0">
+                    <h3 class="font-bold text-lg border-b pb-2">Lab Controls</h3>
+                    
+                    <div class="bg-slate-50 p-3 rounded border">
+                        <p class="text-sm font-semibold mb-2">1. Prepare Mixture</p>
+                        <button id="btnAddReagents" class="btn-primary w-full py-2 rounded text-sm mb-2"><i class="fa-solid fa-vial mr-2"></i>Add Ethanol & Ethanoic Acid</button>
+                        <button id="btnAddCatalyst" class="w-full py-2 rounded text-sm bg-yellow-500 hover:bg-yellow-600 text-white transition mb-2 disabled:opacity-50" disabled><i class="fa-solid fa-droplet mr-2"></i>Add conc. H₂SO₄</button>
+                        <button id="btnAddGranules" class="w-full py-2 rounded text-sm bg-slate-600 hover:bg-slate-700 text-white transition disabled:opacity-50" disabled><i class="fa-solid fa-cubes mr-2"></i>Add Anti-bumping Granules</button>
+                    </div>
+
+                    <div class="bg-red-50 p-3 rounded border border-red-100">
+                        <p class="text-sm font-semibold mb-2 text-red-800">2. Reflux Operation</p>
+                        <div class="flex items-center gap-2 mb-3">
+                            <label class="switch relative inline-block w-10 h-6">
+                              <input type="checkbox" id="waterToggle" class="opacity-0 w-0 h-0" disabled>
+                              <span class="slider round absolute cursor-pointer inset-0 bg-slate-300 rounded-full transition before:absolute before:content-[''] before:h-4 before:w-4 before:left-1 before:bottom-1 before:bg-white before:rounded-full before:transition"></span>
+                            </label>
+                            <span class="text-sm text-slate-700">Turn on Condenser Water</span>
+                        </div>
+                        <button id="btnHeat" class="w-full py-2 rounded text-sm bg-red-500 hover:bg-red-600 text-white transition shadow-sm disabled:opacity-50 flex justify-center items-center gap-2" disabled>
+                            <i class="fa-solid fa-fire"></i> <span id="heatBtnText">Start Heating (Oil Bath)</span>
+                        </button>
+                    </div>
+
+                    <div class="bg-blue-50 p-3 rounded border border-blue-100 mt-auto">
+                        <h4 class="font-semibold text-sm mb-2"><i class="fa-solid fa-magnifying-glass-chart mr-1"></i> Observation</h4>
+                        <p id="lab-observation" class="text-sm text-slate-600 italic">Apparatus is empty. Add reagents to begin.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Toggle CSS for toggle switch -->
+            <style>
+                input:checked + .slider { background-color: #3b82f6; }
+                input:checked + .slider:before { transform: translateX(16px); }
+            </style>
+        </section>
+
+        <!-- Tab: Flowchart -->
+        <section id="flowchart" class="tab-content max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold mb-6 border-b-2 border-blue-200 pb-2 text-blue-800">Process Flowchart: Making an Ester</h2>
+            
+            <div class="glass-panel p-6 rounded-xl shadow-sm">
+                <div class="timeline-container">
+                    
+                    <!-- Step 1 -->
+                    <div class="timeline-step">
+                        <div class="timeline-dot"></div>
+                        <h3 class="text-lg font-bold text-slate-800">Step 1: Mixing Reactants</h3>
+                        <p class="text-slate-600 mt-1">Mix equal volumes of the alkanol (e.g., ethanol) and alkanoic acid (e.g., ethanoic acid) in a pear-shaped flask.</p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="timeline-step">
+                        <div class="timeline-dot"></div>
+                        <h3 class="text-lg font-bold text-slate-800">Step 2: Adding Catalyst & Safety Measures</h3>
+                        <p class="text-slate-600 mt-1">Carefully add a few drops of <strong>concentrated sulphuric acid</strong> (\(\text{H}_2\text{SO}_4\)). Add a few <strong>anti-bumping granules</strong>.</p>
+                        <div class="mt-2 bg-red-50 border-l-4 border-red-500 p-3 rounded-r text-sm text-red-800">
+                            <strong><i class="fa-solid fa-triangle-exclamation"></i> Safety / DSE Key Point:</strong> Anti-bumping granules ensure smooth boiling and prevent explosive boiling (bumping) by providing a surface for small bubbles to form.
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="timeline-step">
+                        <div class="timeline-dot"></div>
+                        <h3 class="text-lg font-bold text-slate-800">Step 3: Heating under Reflux</h3>
+                        <p class="text-slate-600 mt-1">Attach a <strong>Liebig condenser</strong> vertically to the flask. Heat the mixture using an oil bath or heating mantle for about 15-30 minutes.</p>
+                        <div class="mt-2 flex gap-4">
+                            <div class="bg-blue-50 border-l-4 border-blue-500 p-3 rounded-r text-sm text-blue-800 flex-1">
+                                <strong><i class="fa-solid fa-droplet"></i> Condenser Rule:</strong> Water must enter from the <em>bottom</em> and exit from the <em>top</em> to ensure the cooling jacket is completely filled with water.
+                            </div>
+                            <div class="bg-orange-50 border-l-4 border-orange-500 p-3 rounded-r text-sm text-orange-800 flex-1">
+                                <strong><i class="fa-solid fa-fire-ban"></i> Safety:</strong> Do NOT use a naked flame (Bunsen burner) because organics (alcohols, esters) are highly flammable.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="timeline-step">
+                        <div class="timeline-dot"></div>
+                        <h3 class="text-lg font-bold text-slate-800">Step 4: Separation (Distillation)</h3>
+                        <p class="text-slate-600 mt-1">Rearrange the apparatus for simple distillation to distill off the crude ester, which has a lower boiling point than the reactants.</p>
+                    </div>
+
+                    <!-- Step 5 -->
+                    <div class="timeline-step">
+                        <div class="timeline-dot"></div>
+                        <h3 class="text-lg font-bold text-slate-800">Step 5: Purification (Using Separating Funnel)</h3>
+                        <p class="text-slate-600 mt-1">Wash the distillate with <strong>sodium carbonate solution (\(\text{Na}_2\text{CO}_3\))</strong> in a separating funnel to remove unreacted acid.</p>
+                        <div class="mt-2 bg-yellow-50 border-l-4 border-yellow-500 p-3 rounded-r text-sm text-yellow-800">
+                            <strong><i class="fa-solid fa-wind"></i> DSE Key Point:</strong> Open the stopcock frequently during shaking to release \(\text{CO}_2\) gas pressure generated by the reaction between the acid and carbonate.
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab: Exam Challenge -->
+        <section id="exam" class="tab-content max-w-4xl mx-auto">
+             <h2 class="text-3xl font-bold mb-6 border-b-2 border-blue-200 pb-2 text-blue-800">Exam Challenge: Setup Analysis</h2>
+             
+             <div class="glass-panel p-6 rounded-xl shadow-sm">
+                <p class="mb-4 text-lg">A student set up the following apparatus to prepare an ester from propan-1-ol and methanoic acid. Identify the <strong>THREE mistakes</strong> in the setup description below based on typical HKDSE questions.</p>
+                
+                <div class="bg-slate-100 p-6 rounded border border-slate-300 relative mb-6 font-mono text-sm leading-relaxed">
+                    <span class="block mb-2 font-bold text-slate-700">Experimental Report Extract:</span>
+                    "10 cm³ of propan-1-ol and 10 cm³ of methanoic acid were mixed in a pear-shaped flask. A few drops of dilute sulphuric acid were added as a catalyst. A Liebig condenser was attached vertically. A Bunsen burner was placed directly under the flask to boil the mixture vigorously for 20 minutes. Cooling water entered the top of the condenser and exited from the bottom."
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Interactive Find Mistakes -->
+                    <button onclick="revealMistake(1, this)" class="text-left bg-white p-4 rounded border shadow-sm hover:bg-blue-50 transition border-l-4 border-l-slate-400">Mistake 1: Catalyst type</button>
+                    <button onclick="revealMistake(2, this)" class="text-left bg-white p-4 rounded border shadow-sm hover:bg-blue-50 transition border-l-4 border-l-slate-400">Mistake 2: Heating method</button>
+                    <button onclick="revealMistake(3, this)" class="text-left bg-white p-4 rounded border shadow-sm hover:bg-blue-50 transition border-l-4 border-l-slate-400">Mistake 3: Condenser water flow</button>
+                    <button onclick="revealMistake(4, this)" class="text-left bg-white p-4 rounded border shadow-sm hover:bg-blue-50 transition border-l-4 border-l-slate-400">Mistake 4: Missing safety solid</button>
+                </div>
+
+                <div id="exam-feedback" class="mt-6 hidden">
+                    <h4 class="font-bold text-green-700 mb-2 border-b border-green-200 pb-1">Answers & Corrections</h4>
+                    <ul class="list-disc pl-5 space-y-2 text-sm" id="exam-feedback-list">
+                        <!-- Filled by JS -->
+                    </ul>
+                </div>
+             </div>
+        </section>
+
+        <!-- Tab: Misconceptions -->
+        <section id="misconceptions" class="tab-content max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold mb-6 border-b-2 border-blue-200 pb-2 text-blue-800">Common Misconceptions</h2>
+            
+            <div class="grid grid-cols-1 gap-6">
+                <!-- Card 1 -->
+                <div class="flex flex-col md:flex-row bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-red-50 p-5 md:w-1/2 border-b md:border-b-0 md:border-r border-slate-200">
+                        <div class="text-red-600 font-bold mb-2 flex items-center"><i class="fa-solid fa-xmark text-xl mr-2"></i> Common Error</div>
+                        <p class="text-slate-700 italic">"In esterification, the water molecule is formed from the -OH of the alcohol and the -H of the carboxylic acid."</p>
+                    </div>
+                    <div class="bg-green-50 p-5 md:w-1/2">
+                        <div class="text-green-600 font-bold mb-2 flex items-center"><i class="fa-solid fa-check text-xl mr-2"></i> Correct Concept</div>
+                        <p class="text-slate-800">The <strong>-OH</strong> comes from the <strong>alkanoic acid</strong>, and the <strong>-H</strong> comes from the <strong>alkanol</strong>. This is proven using Oxygen-18 isotopic labeling.</p>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="flex flex-col md:flex-row bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-red-50 p-5 md:w-1/2 border-b md:border-b-0 md:border-r border-slate-200">
+                        <div class="text-red-600 font-bold mb-2 flex items-center"><i class="fa-solid fa-xmark text-xl mr-2"></i> Common Error</div>
+                        <p class="text-slate-700 italic">"Heating under reflux is used to distill and collect the ester immediately as it forms."</p>
+                    </div>
+                    <div class="bg-green-50 p-5 md:w-1/2">
+                        <div class="text-green-600 font-bold mb-2 flex items-center"><i class="fa-solid fa-check text-xl mr-2"></i> Correct Concept</div>
+                        <p class="text-slate-800">Reflux prevents the loss of volatile reactants and products by condensing them back into the flask, allowing prolonged heating to reach equilibrium. It does <strong>not</strong> separate the ester. Distillation is done <em>after</em> reflux.</p>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="flex flex-col md:flex-row bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-red-50 p-5 md:w-1/2 border-b md:border-b-0 md:border-r border-slate-200">
+                        <div class="text-red-600 font-bold mb-2 flex items-center"><i class="fa-solid fa-xmark text-xl mr-2"></i> Common Error</div>
+                        <p class="text-slate-700 italic">"The product of propanol and ethanoic acid is propyl ethanoate, written as \(\text{C}_3\text{H}_7\text{COOCH}_3\)."</p>
+                    </div>
+                    <div class="bg-green-50 p-5 md:w-1/2">
+                        <div class="text-green-600 font-bold mb-2 flex items-center"><i class="fa-solid fa-check text-xl mr-2"></i> Correct Concept</div>
+                        <p class="text-slate-800">The structural formula is written with the acid part first. It is propyl ethanoate, but the formula is <strong>\(\text{CH}_3\text{COOC}_3\text{H}_7\)</strong> or \(\text{CH}_3\text{COOCH}_2\text{CH}_2\text{CH}_3\).</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab: Summary -->
+        <section id="summary" class="tab-content max-w-4xl mx-auto">
+             <h2 class="text-3xl font-bold mb-6 border-b-2 border-blue-200 pb-2 text-blue-800">Revision Summary</h2>
+             
+             <div class="glass-panel p-6 rounded-xl shadow-sm">
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                     <div>
+                         <h3 class="font-bold text-lg text-slate-800 border-b pb-1 mb-3"><i class="fa-solid fa-clipboard-list mr-2"></i>Core Facts</h3>
+                         <ul class="list-none space-y-2 text-sm">
+                             <li class="flex"><i class="fa-solid fa-caret-right text-blue-500 mt-1 mr-2"></i> <span><strong>Reaction:</strong> Alkanol + Alkanoic acid \(\rightleftharpoons\) Ester + Water</span></li>
+                             <li class="flex"><i class="fa-solid fa-caret-right text-blue-500 mt-1 mr-2"></i> <span><strong>Type:</strong> Condensation / Reversible</span></li>
+                             <li class="flex"><i class="fa-solid fa-caret-right text-blue-500 mt-1 mr-2"></i> <span><strong>Catalyst:</strong> Concentrated \(\text{H}_2\text{SO}_4\)</span></li>
+                             <li class="flex"><i class="fa-solid fa-caret-right text-blue-500 mt-1 mr-2"></i> <span><strong>Mechanism:</strong> Acid loses -OH, Alcohol loses -H.</span></li>
+                             <li class="flex"><i class="fa-solid fa-caret-right text-blue-500 mt-1 mr-2"></i> <span><strong>Physical Property:</strong> Esters have sweet, fruity smells and are insoluble in water.</span></li>
+                         </ul>
+                     </div>
+                     <div>
+                         <h3 class="font-bold text-lg text-slate-800 border-b pb-1 mb-3"><i class="fa-solid fa-flask text-blue-500 mr-2"></i>Lab Techniques</h3>
+                         <ul class="list-none space-y-2 text-sm">
+                             <li class="flex"><i class="fa-solid fa-caret-right text-blue-500 mt-1 mr-2"></i> <span><strong>Reflux:</strong> Heats mixture without losing volatile substances.</span></li>
+                             <li class="flex"><i class="fa-solid fa-caret-right text-blue-500 mt-1 mr-2"></i> <span><strong>Heating:</strong> Water bath/heating mantle (flammable organics).</span></li>
+                             <li class="flex"><i class="fa-solid fa-caret-right text-blue-500 mt-1 mr-2"></i> <span><strong>Anti-bumping granules:</strong> Prevent explosive boiling.</span></li>
+                             <li class="flex"><i class="fa-solid fa-caret-right text-blue-500 mt-1 mr-2"></i> <span><strong>Condenser water flow:</strong> Bottom IN, Top OUT.</span></li>
+                             <li class="flex"><i class="fa-solid fa-caret-right text-blue-500 mt-1 mr-2"></i> <span><strong>Purification:</strong> Wash with \(\text{Na}_2\text{CO}_3(aq)\) to neutralize excess acid; release \(\text{CO}_2\) gas.</span></li>
+                         </ul>
+                     </div>
+                 </div>
+             </div>
+        </section>
+
+        <!-- Tab: Quiz -->
+        <section id="quiz" class="tab-content max-w-3xl mx-auto">
+            <h2 class="text-3xl font-bold mb-6 border-b-2 border-blue-200 pb-2 text-blue-800">Consolidation Quiz</h2>
+            
+            <div id="quiz-container" class="glass-panel p-6 rounded-xl shadow-sm">
+                <!-- Quiz dynamically injected here -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- App Logic & Scripts -->
+    <script>
+        // --- UI Navigation Logic ---
+        function openTab(tabId, btn) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            // Remove active class from buttons
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('active', 'bg-blue-600');
+                b.classList.add('hover:bg-slate-800');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabId).classList.add('active');
+            
+            // Highlight active button
+            btn.classList.add('active', 'bg-blue-600');
+            btn.classList.remove('hover:bg-slate-800');
+
+            // Force MathJax to re-render if needed
+            if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                MathJax.typesetPromise();
+            }
+
+            // Handle 3D Canvas Resize fix
+            if(tabId === 'lab' && renderer) {
+                setTimeout(() => {
+                    resizeCanvas();
+                }, 50);
+            }
+        }
+
+        // --- Exam Challenge Logic ---
+        let mistakesFound = 0;
+        function revealMistake(id, btn) {
+            if(btn.disabled) return;
+            btn.disabled = true;
+            btn.classList.remove('bg-white', 'hover:bg-blue-50', 'border-l-slate-400');
+            
+            const feedbackList = document.getElementById('exam-feedback-list');
+            document.getElementById('exam-feedback').classList.remove('hidden');
+
+            const li = document.createElement('li');
+            
+            if(id === 1) {
+                btn.classList.add('bg-green-100', 'border-l-green-600', 'text-green-800');
+                li.innerHTML = "<strong>Catalyst:</strong> 'Dilute sulphuric acid' is wrong. It must be <strong>concentrated sulphuric acid</strong> to act as a dehydrating agent.";
+                mistakesFound++;
+            } else if (id === 2) {
+                btn.classList.add('bg-green-100', 'border-l-green-600', 'text-green-800');
+                li.innerHTML = "<strong>Heating:</strong> 'Bunsen burner directly under flask' is dangerous. Alcohols and esters are highly flammable. An <strong>oil bath, water bath, or heating mantle</strong> should be used.";
+                mistakesFound++;
+            } else if (id === 3) {
+                btn.classList.add('bg-green-100', 'border-l-green-600', 'text-green-800');
+                li.innerHTML = "<strong>Condenser flow:</strong> Water entering from the top is incorrect. Water must enter from the <strong>bottom</strong> and exit from the <strong>top</strong> to keep the jacket full of cold water.";
+                mistakesFound++;
+            } else if (id === 4) {
+                btn.classList.add('bg-green-100', 'border-l-green-600', 'text-green-800');
+                li.innerHTML = "<strong>Missing solid:</strong> The description forgot to mention adding <strong>anti-bumping granules</strong> before heating to prevent explosive boiling.";
+                mistakesFound++;
+            }
+            
+            feedbackList.appendChild(li);
+        }
+
+        // --- Quiz Logic ---
+        const quizData = [
+            {
+                question: "Which of the following mixtures will produce propyl ethanoate?",
+                options: [
+                    "Propan-1-ol and methanoic acid",
+                    "Ethanol and propanoic acid",
+                    "Propan-1-ol and ethanoic acid",
+                    "Propan-2-ol and methanoic acid"
+                ],
+                answer: 2,
+                explanation: "Propyl ethanoate comes from propanol (propyl) and ethanoic acid (ethanoate)."
+            },
+            {
+                question: "What is the main role of concentrated sulphuric acid in esterification?",
+                options: [
+                    "To neutralize the basic alcohol.",
+                    "To act as a catalyst and dehydrating agent.",
+                    "To act as a solvent.",
+                    "To provide H+ ions for the condenser."
+                ],
+                answer: 1,
+                explanation: "It catalyzes the reaction and removes water, pushing the equilibrium to the right to produce more ester."
+            },
+            {
+                question: "During heating under reflux, why is a water bath preferred over a naked flame?",
+                options: [
+                    "To achieve a higher temperature than a Bunsen burner.",
+                    "Because organic reactants and products are highly flammable.",
+                    "To prevent the anti-bumping granules from melting.",
+                    "To speed up the flow of water in the condenser."
+                ],
+                answer: 1,
+                explanation: "Alcohols and esters are volatile and highly flammable. A naked flame poses a severe fire risk."
+            },
+            {
+                question: "When separating the ester, the mixture is washed with sodium carbonate solution. What gas is observed effervescing?",
+                options: [
+                    "Hydrogen",
+                    "Oxygen",
+                    "Carbon dioxide",
+                    "Sulphur dioxide"
+                ],
+                answer: 2,
+                explanation: "Sodium carbonate reacts with the unreacted alkanoic acid (and sulfuric acid) to produce carbon dioxide gas."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function loadQuiz() {
+            const container = document.getElementById('quiz-container');
+            if (currentQuestion >= quizData.length) {
+                container.innerHTML = `
+                    <div class="text-center p-8">
+                        <i class="fa-solid fa-trophy text-5xl text-yellow-500 mb-4"></i>
+                        <h3 class="text-2xl font-bold">Quiz Complete!</h3>
+                        <p class="text-lg mt-2">You scored ${score} out of ${quizData.length}</p>
+                        <button onclick="resetQuiz()" class="mt-6 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Retake Quiz</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const q = quizData[currentQuestion];
+            let optionsHtml = '';
+            q.options.forEach((opt, index) => {
+                optionsHtml += `
+                    <button onclick="checkAnswer(${index})" class="w-full text-left p-4 mb-3 border rounded-lg hover:bg-slate-50 transition quiz-option">
+                        ${String.fromCharCode(65 + index)}. ${opt}
+                    </button>
+                `;
+            });
+
+            container.innerHTML = `
+                <div class="mb-4 flex justify-between text-sm text-slate-500 font-bold">
+                    <span>Question ${currentQuestion + 1} of ${quizData.length}</span>
+                    <span>Score: ${score}</span>
+                </div>
+                <h3 class="text-xl font-semibold mb-4">${q.question}</h3>
+                <div id="options-container">${optionsHtml}</div>
+                <div id="quiz-feedback" class="mt-4 p-4 rounded-lg hidden"></div>
+                <button id="next-btn" onclick="nextQuestion()" class="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hidden float-right">Next Question <i class="fa-solid fa-arrow-right ml-1"></i></button>
+                <div class="clear-both"></div>
+            `;
+            
+            if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                MathJax.typesetPromise();
+            }
+        }
+
+        function checkAnswer(selectedIndex) {
+            const q = quizData[currentQuestion];
+            const options = document.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('quiz-feedback');
+            const nextBtn = document.getElementById('next-btn');
+
+            // Disable buttons
+            options.forEach(opt => opt.disabled = true);
+
+            if (selectedIndex === q.answer) {
+                options[selectedIndex].classList.add('bg-green-100', 'border-green-500', 'text-green-800');
+                feedback.innerHTML = `<strong><i class="fa-solid fa-check text-green-600 mr-2"></i> Correct!</strong> ${q.explanation}`;
+                feedback.classList.add('bg-green-50', 'border', 'border-green-200', 'text-green-800', 'block');
+                feedback.classList.remove('hidden');
+                score++;
+            } else {
+                options[selectedIndex].classList.add('bg-red-100', 'border-red-500', 'text-red-800');
+                options[q.answer].classList.add('bg-green-100', 'border-green-500'); // Show correct
+                feedback.innerHTML = `<strong><i class="fa-solid fa-xmark text-red-600 mr-2"></i> Incorrect.</strong> ${q.explanation}`;
+                feedback.classList.add('bg-red-50', 'border', 'border-red-200', 'text-red-800', 'block');
+                feedback.classList.remove('hidden');
+            }
+
+            nextBtn.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            loadQuiz();
+        }
+
+        function resetQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            loadQuiz();
+        }
+
+        // Initialize quiz
+        loadQuiz();
+
+        // --- Three.js 3D Virtual Lab Logic ---
+        let scene, camera, renderer;
+        let flask, condenser, heater, liquid, bubbles;
+        let animationId;
+        
+        // Lab State
+        let state = {
+            reagentsAdded: false,
+            catalystAdded: false,
+            granulesAdded: false,
+            waterOn: false,
+            heating: false,
+            temp: 25,
+            reactionProgress: 0 // 0 to 1
+        };
+
+        const canvasContainer = document.getElementById('canvas-container');
+        const obsText = document.getElementById('lab-observation');
+        const tempDisplay = document.getElementById('temp-display');
+
+        function init3D() {
+            // Setup Scene
+            scene = new THREE.Scene();
+            
+            // VISUAL RULE: Dark background
+            scene.background = new THREE.Color(0x1e293b); 
+
+            // Setup Camera
+            camera = new THREE.PerspectiveCamera(45, canvasContainer.clientWidth / canvasContainer.clientHeight, 0.1, 100);
+            camera.position.set(0, 5, 20);
+
+            // Setup Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+            renderer.shadowMap.enabled = true;
+            canvasContainer.appendChild(renderer.domElement);
+
+            // Lights
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(5, 10, 5);
+            directionalLight.castShadow = true;
+            scene.add(directionalLight);
+
+            const backLight = new THREE.DirectionalLight(0xffffff, 0.3);
+            backLight.position.set(-5, 5, -5);
+            scene.add(backLight);
+
+            // --- Materials ---
+            const glassMaterial = new THREE.MeshPhysicalMaterial({
+                color: 0xffffff, transmission: 0.9, opacity: 1, metalness: 0.1, roughness: 0.1, ior: 1.5, thickness: 0.5, transparent: true
+            });
+            const liquidMaterial = new THREE.MeshPhysicalMaterial({
+                color: 0xe0f0ff, transmission: 0.7, opacity: 0.85, transparent: true, roughness: 0.2, metalness: 0.1
+            });
+            const heaterMaterial = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.8 });
+            const hotplateMaterial = new THREE.MeshStandardMaterial({ color: 0x111827 });
+
+            // --- Geometry ---
+            
+            // 1. Heater Base
+            heater = new THREE.Group();
+            const baseGeo = new THREE.CylinderGeometry(3, 3, 1, 32);
+            const base = new THREE.Mesh(baseGeo, heaterMaterial);
+            base.position.y = -2.5;
+            base.receiveShadow = true;
+            
+            const plateGeo = new THREE.CylinderGeometry(2.5, 2.5, 0.2, 32);
+            const plate = new THREE.Mesh(plateGeo, hotplateMaterial);
+            plate.position.y = -1.9;
+            
+            heater.add(base);
+            heater.add(plate);
+            scene.add(heater);
+
+            // 2. Pear-shaped flask (approximated)
+            flask = new THREE.Group();
+            
+            const bellyGeo = new THREE.SphereGeometry(2, 32, 32);
+            const belly = new THREE.Mesh(bellyGeo, glassMaterial);
+            belly.position.y = 0;
+            
+            const neckGeo = new THREE.CylinderGeometry(0.5, 0.8, 2, 32);
+            const neck = new THREE.Mesh(neckGeo, glassMaterial);
+            neck.position.y = 2.5;
+            
+            flask.add(belly);
+            flask.add(neck);
+            scene.add(flask);
+
+            // Liquid Level (initially hidden/small)
+            const liqGeo = new THREE.SphereGeometry(1.9, 32, 32, 0, Math.PI * 2, 0, Math.PI / 2); // Bottom hemisphere
+            liquid = new THREE.Mesh(liqGeo, liquidMaterial);
+            liquid.position.y = 0;
+            liquid.scale.set(0.01, 0.01, 0.01); // Hidden
+            flask.add(liquid);
+
+            // Anti-bumping granules (hidden initially)
+            granulesGroup = new THREE.Group();
+            const granMaterial = new THREE.MeshStandardMaterial({color: 0x9ca3af, roughness: 0.9});
+            for(let i=0; i<15; i++) {
+                const g = new THREE.Mesh(new THREE.DodecahedronGeometry(0.1), granMaterial);
+                g.position.set((Math.random()-0.5)*1.5, -1.8 + Math.random()*0.2, (Math.random()-0.5)*1.5);
+                granulesGroup.add(g);
+            }
+            granulesGroup.visible = false;
+            flask.add(granulesGroup);
+
+            // 3. Liebig Condenser
+            condenser = new THREE.Group();
+            
+            // Inner tube
+            const innerTubeGeo = new THREE.CylinderGeometry(0.3, 0.3, 6, 16);
+            const innerTube = new THREE.Mesh(innerTubeGeo, glassMaterial);
+            
+            // Outer water jacket
+            const jacketGeo = new THREE.CylinderGeometry(0.8, 0.8, 4.5, 16);
+            const jacket = new THREE.Mesh(jacketGeo, new THREE.MeshPhysicalMaterial({
+                color: 0x93c5fd, transmission: 0.7, opacity: 0.4, transparent: true
+            }));
+            
+            // Inlet/Outlet
+            const portGeo = new THREE.CylinderGeometry(0.15, 0.15, 1, 16);
+            const portIn = new THREE.Mesh(portGeo, glassMaterial);
+            portIn.rotation.z = Math.PI / 2;
+            portIn.position.set(0.8, -1.8, 0);
+            
+            const portOut = new THREE.Mesh(portGeo, glassMaterial);
+            portOut.rotation.z = Math.PI / 2;
+            portOut.position.set(-0.8, 1.8, 0);
+
+            condenser.add(innerTube);
+            condenser.add(jacket);
+            condenser.add(portIn);
+            condenser.add(portOut);
+            
+            condenser.position.y = 7;
+            scene.add(condenser);
+
+            // Stand/Clamp (simplified)
+            const standGeo = new THREE.CylinderGeometry(0.1, 0.1, 12, 8);
+            const standMat = new THREE.MeshStandardMaterial({color: 0x64748b, metalness: 0.8});
+            const stand = new THREE.Mesh(standGeo, standMat);
+            stand.position.set(-4, 2, 0);
+            scene.add(stand);
+            
+            const clampGeo = new THREE.CylinderGeometry(0.05, 0.05, 4, 8);
+            const clamp1 = new THREE.Mesh(clampGeo, standMat);
+            clamp1.rotation.z = Math.PI/2;
+            clamp1.position.set(-2, 2.5, 0);
+            scene.add(clamp1);
+
+            // Particles for bubbling/vapor
+            const particleCount = 200;
+            const particlesGeo = new THREE.BufferGeometry();
+            const pPositions = new Float32Array(particleCount * 3);
+            const pVelocities = [];
+
+            for(let i=0; i<particleCount; i++) {
+                pPositions[i*3] = (Math.random() - 0.5) * 1.5; // x
+                pPositions[i*3+1] = (Math.random() * 2) - 1; // y
+                pPositions[i*3+2] = (Math.random() - 0.5) * 1.5; // z
+                pVelocities.push({
+                    y: Math.random() * 0.03 + 0.025,
+                    x: (Math.random() - 0.5) * 0.015,
+                    z: (Math.random() - 0.5) * 0.015
+                });
+            }
+            particlesGeo.setAttribute('position', new THREE.BufferAttribute(pPositions, 3));
+            
+            const particleMat = new THREE.PointsMaterial({
+                color: 0xffffff, size: 0.15, transparent: true, opacity: 0
+            });
+            bubbles = new THREE.Points(particlesGeo, particleMat);
+            bubbles.userData = { velocities: pVelocities };
+            flask.add(bubbles);
+
+            // Interaction state vars
+            let isDragging = false;
+            let previousMousePosition = { x: 0, y: 0 };
+
+            // Mouse events for rotation
+            canvasContainer.addEventListener('mousedown', (e) => {
+                isDragging = true;
+            });
+            canvasContainer.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    const deltaMove = {
+                        x: e.offsetX - previousMousePosition.x,
+                        y: e.offsetY - previousMousePosition.y
+                    };
+                    
+                    const rotationSpeed = 0.005;
+                    scene.rotation.y += deltaMove.x * rotationSpeed;
+                    
+                    // Limit up/down rotation to keep realistic perspective
+                    scene.rotation.x += deltaMove.y * rotationSpeed;
+                    scene.rotation.x = Math.max(-Math.PI/6, Math.min(Math.PI/6, scene.rotation.x));
+                }
+                previousMousePosition = { x: e.offsetX, y: e.offsetY };
+            });
+            window.addEventListener('mouseup', () => { isDragging = false; });
+            
+            // Zoom
+            canvasContainer.addEventListener('wheel', (e) => {
+                camera.position.z += e.deltaY * 0.01;
+                camera.position.z = Math.max(10, Math.min(30, camera.position.z));
+                e.preventDefault();
+            });
+
+            // Remove loading overlay
+            document.getElementById('loading-overlay').style.display = 'none';
+
+            animate();
+        }
+
+        function resizeCanvas() {
+            if(!camera || !renderer) return;
+            const width = canvasContainer.clientWidth;
+            const height = canvasContainer.clientHeight;
+            renderer.setSize(width, height);
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        function animate() {
+            animationId = requestAnimationFrame(animate);
+
+            // Temperature logic
+            if (state.heating) {
+                if (state.temp < 90) state.temp += 0.2; // Heat up to ~90C for reflux
+            } else {
+                if (state.temp > 25) state.temp -= 0.1; // Cool down
+            }
+            tempDisplay.innerText = `Temperature: ${Math.floor(state.temp)}°C`;
+
+            // Heater visual
+            if (state.heating) {
+                heater.children[1].material.color.setHex(0xff3300); // Glow red
+                heater.children[1].material.emissive.setHex(0x550000);
+            } else {
+                heater.children[1].material.color.setHex(0x111827);
+                heater.children[1].material.emissive.setHex(0x000000);
+            }
+
+            // Boiling logic & Reaction progress
+            if (state.reagentsAdded && state.temp > 75) {
+                // Bubbles visible
+                bubbles.material.opacity = Math.min(0.8, (state.temp - 75) * 0.1);
+                
+                const positions = bubbles.geometry.attributes.position.array;
+                const vels = bubbles.userData.velocities;
+                
+                for(let i=0; i<200; i++) {
+                    positions[i*3+1] += vels[i].y * (state.temp/80); // move up
+                    positions[i*3] += vels[i].x; // wiggle x
+                    positions[i*3+2] += vels[i].z; // wiggle z
+                    
+                    // Keep particles within flask boundaries
+                    const radius = Math.sqrt(positions[i*3]**2 + positions[i*3+2]**2);
+                    if (radius > 1.5) {
+                        const angle = Math.atan2(positions[i*3+2], positions[i*3]);
+                        positions[i*3] = 1.4 * Math.cos(angle);
+                        positions[i*3+2] = 1.4 * Math.sin(angle);
+                    }
+                    
+                    // Condensation logic (if water is on, vapor condenses at condenser. If off, it escapes)
+                    let resetHeight = state.waterOn ? 3.5 : 10;
+                    
+                    if(positions[i*3+1] > resetHeight) {
+                        // Reset to bottom of flask with random position
+                        positions[i*3+1] = -1.5;
+                        const newAngle = Math.random() * Math.PI * 2;
+                        const newRadius = Math.random() * 1.2;
+                        positions[i*3] = newRadius * Math.cos(newAngle);
+                        positions[i*3+2] = newRadius * Math.sin(newAngle);
+                    }
+                    
+                    // Keep particles from going too low (below liquid level)
+                    if(positions[i*3+1] < -1.7) {
+                        positions[i*3+1] = -1.7;
+                    }
+                }
+                bubbles.geometry.attributes.position.needsUpdate = true;
+
+                // Reaction progress (only progresses if catalyst present and refluxing properly)
+                if (state.catalystAdded && state.waterOn) {
+                    state.reactionProgress += 0.001;
+                    if(state.reactionProgress > 1) state.reactionProgress = 1;
+                    
+                    // Liquid color changes from light blue to yellow (ester formation)
+                    const progress = state.reactionProgress;
+                    // Start: light blue (0xe0f0ff), End: yellow-orange (0xffe680)
+                    const r = 0xe0 + (0xff - 0xe0) * progress;
+                    const g = 0xf0 + (0xe6 - 0xf0) * progress;
+                    const b = 0xff + (0x80 - 0xff) * progress;
+                    liquid.material.color.setRGB(r/255, g/255, b/255);
+                }
+            } else {
+                bubbles.material.opacity = 0;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // Setup 3D Lab UI bindings
+        document.getElementById('btnAddReagents').addEventListener('click', (e) => {
+            state.reagentsAdded = true;
+            
+            // Animate liquid filling with visible color
+            liquid.material.color.setHex(0xe0f0ff); // Light blue tint
+            liquid.material.opacity = 0;
+            let scale = 0.01;
+            let opacity = 0;
+            const fillInterval = setInterval(() => {
+                scale += 0.04;
+                opacity += 0.04;
+                liquid.scale.set(scale, scale, scale);
+                liquid.material.opacity = Math.min(0.85, opacity);
+                if(scale >= 1) clearInterval(fillInterval);
+            }, 40);
+            
+            e.target.disabled = true;
+            e.target.innerHTML = '<i class="fa-solid fa-check mr-2"></i>Reagents Added';
+            e.target.classList.remove('btn-primary');
+            e.target.classList.add('bg-blue-600', 'text-white');
+            
+            document.getElementById('btnAddCatalyst').disabled = false;
+            document.getElementById('btnAddGranules').disabled = false;
+            obsText.innerText = "Clear mixture of ethanol (C₂H₅OH) and ethanoic acid (CH₃COOH) added to flask. Notice the light appearance of the liquid.";
+        });
+
+        document.getElementById('btnAddCatalyst').addEventListener('click', (e) => {
+            state.catalystAdded = true;
+            
+            // Visual effect: liquid becomes slightly more yellowish due to catalyst
+            liquid.material.color.setHex(0xf5f5dc); // Beige/cream color
+            
+            e.target.disabled = true;
+            e.target.innerHTML = '<i class="fa-solid fa-check mr-2"></i>Catalyst Added';
+            e.target.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
+            e.target.classList.add('bg-yellow-600', 'text-white');
+            
+            obsText.innerText = "Conc. H₂SO₄ added carefully. The mixture becomes slightly warmer and takes on a faint yellow tint. The acid acts as both catalyst and dehydrating agent.";
+        });
+
+        document.getElementById('btnAddGranules').addEventListener('click', (e) => {
+            state.granulesAdded = true;
+            granulesGroup.visible = true; // Show granules
+            e.target.disabled = true;
+            e.target.innerHTML = '<i class="fa-solid fa-check mr-2"></i>Granules Added';
+            
+            // Enable heat controls
+            document.getElementById('waterToggle').disabled = false;
+            document.getElementById('btnHeat').disabled = false;
+            obsText.innerText = "Anti-bumping granules added to ensure smooth boiling.";
+        });
+
+        document.getElementById('waterToggle').addEventListener('change', (e) => {
+            state.waterOn = e.target.checked;
+            if (state.waterOn) {
+                // Change condenser jacket color to represent cold water
+                condenser.children[1].material.color.setHex(0x3b82f6); 
+                condenser.children[1].material.opacity = 0.5;
+                obsText.innerText = "Cooling water flowing. Vapor will condense and fall back into the flask.";
+            } else {
+                condenser.children[1].material.color.setHex(0x93c5fd);
+                condenser.children[1].material.opacity = 0.2;
+                if(state.heating) {
+                    obsText.innerHTML = "<span class='text-red-600 font-bold'>Warning! Heating without water flow will cause volatile vapors to escape and pose a fire hazard!</span>";
+                }
+            }
+        });
+
+        const btnHeat = document.getElementById('btnHeat');
+        btnHeat.addEventListener('click', () => {
+            if(!state.granulesAdded) {
+                alert("Safety Protocol: Add anti-bumping granules before heating!");
+                return;
+            }
+            state.heating = !state.heating;
+            if(state.heating) {
+                btnHeat.classList.replace('bg-red-500', 'bg-slate-700');
+                btnHeat.classList.replace('hover:bg-red-600', 'hover:bg-slate-800');
+                document.getElementById('heatBtnText').innerText = "Stop Heating";
+                
+                if(state.waterOn) {
+                    obsText.innerText = "Refluxing started. Mixture is boiling smoothly. Vapor condenses and returns to flask.";
+                } else {
+                    obsText.innerHTML = "<span class='text-red-600 font-bold'>Warning! Heating without water flow! Turn on condenser water immediately.</span>";
+                }
+            } else {
+                btnHeat.classList.replace('bg-slate-700', 'bg-red-500');
+                btnHeat.classList.replace('hover:bg-slate-800', 'hover:bg-red-600');
+                document.getElementById('heatBtnText').innerText = "Start Heating";
+                obsText.innerText = "Heating stopped. Mixture cooling down.";
+            }
+        });
+
+        // Initialize 3D on load
+        window.onload = function() {
+            init3D();
+        };
+    </script>
+</body>
+</html>
