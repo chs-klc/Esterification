@@ -665,10 +665,23 @@
             scene.add(flask);
 
             // Liquid Level (initially hidden/small)
-            // Use a full sphere positioned low - looks consistent from all angles
-            const liqGeo = new THREE.SphereGeometry(1.6, 32, 32);
-            liquid = new THREE.Mesh(liqGeo, liquidMaterial);
-            liquid.position.y = -0.8; // Position low so it appears as liquid at bottom
+            // Create liquid with flat top and curved bottom (like real liquid)
+            liquid = new THREE.Group();
+            
+            // Bottom hemisphere (curved bottom matching flask)
+            const hemiGeo = new THREE.SphereGeometry(1.7, 32, 16, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2);
+            const hemiMesh = new THREE.Mesh(hemiGeo, liquidMaterial);
+            hemiMesh.position.y = 0;
+            liquid.add(hemiMesh);
+            
+            // Flat top disc (liquid surface)
+            const discGeo = new THREE.CircleGeometry(1.7, 32);
+            const discMesh = new THREE.Mesh(discGeo, liquidMaterial);
+            discMesh.rotation.x = -Math.PI / 2; // Face up
+            discMesh.position.y = 0;
+            liquid.add(discMesh);
+            
+            liquid.position.y = -0.5;
             liquid.visible = false; // Start hidden
             flask.add(liquid);
 
@@ -873,7 +886,9 @@
                     const r = 0xff;
                     const g = 0xcc - (0xcc - 0x99) * progress;
                     const b = 0x00 + (0x33 - 0x00) * progress;
-                    liquid.material.color.setRGB(r/255, g/255, b/255);
+                    liquid.children.forEach(child => {
+                        child.material.color.setRGB(r/255, g/255, b/255);
+                    });
                 }
             } else {
                 bubbles.material.opacity = 0;
@@ -887,17 +902,21 @@
             state.reagentsAdded = true;
             
             // Show liquid with animation
-            liquid.material.color.setHex(0x4499ff); // Bright blue
-            liquid.material.opacity = 0;
+            liquid.children.forEach(child => {
+                child.material.color.setHex(0x4499ff); // Bright blue
+                child.material.opacity = 0;
+            });
             liquid.visible = true;
-            liquid.scale.set(0.01, 0.01, 0.01); // Start tiny
+            liquid.scale.set(1, 0.01, 1); // Start flat
             
             let progress = 0;
             const fillInterval = setInterval(() => {
                 progress += 0.05;
-                const scale = Math.min(1, progress);
-                liquid.scale.set(scale, scale, scale); // Grow uniformly
-                liquid.material.opacity = Math.min(0.7, progress * 0.7);
+                const scaleY = Math.min(1, progress);
+                liquid.scale.set(1, scaleY, 1); // Grow upward
+                liquid.children.forEach(child => {
+                    child.material.opacity = Math.min(0.7, progress * 0.7);
+                });
                 if(progress >= 1) clearInterval(fillInterval);
             }, 40);
             
@@ -915,7 +934,9 @@
             state.catalystAdded = true;
             
             // Visual effect: liquid becomes yellowish due to catalyst
-            liquid.material.color.setHex(0xffcc00); // Bright yellow
+            liquid.children.forEach(child => {
+                child.material.color.setHex(0xffcc00); // Bright yellow
+            });
             
             e.target.disabled = true;
             e.target.innerHTML = '<i class="fa-solid fa-check mr-2"></i>Catalyst Added';
