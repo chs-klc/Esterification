@@ -627,7 +627,7 @@
                 color: 0xffffff, transmission: 0.9, opacity: 1, metalness: 0.1, roughness: 0.1, ior: 1.5, thickness: 0.5, transparent: true
             });
             const liquidMaterial = new THREE.MeshPhysicalMaterial({
-                color: 0xe0f0ff, transmission: 0.7, opacity: 0.85, transparent: true, roughness: 0.2, metalness: 0.1
+                color: 0xadd8e6, transmission: 0.3, opacity: 0.95, transparent: true, roughness: 0.3, metalness: 0.05, emissive: 0x2a5a7a, emissiveIntensity: 0.1
             });
             const heaterMaterial = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.8 });
             const hotplateMaterial = new THREE.MeshStandardMaterial({ color: 0x111827 });
@@ -886,7 +886,8 @@
             state.reagentsAdded = true;
             
             // Animate liquid filling with visible color
-            liquid.material.color.setHex(0xe0f0ff); // Light blue tint
+            liquid.material.color.setHex(0xadd8e6); // Light blue (more saturated)
+            liquid.material.emissive.setHex(0x2a5a7a); // Slight glow
             liquid.material.opacity = 0;
             let scale = 0.01;
             let opacity = 0;
@@ -894,7 +895,7 @@
                 scale += 0.04;
                 opacity += 0.04;
                 liquid.scale.set(scale, scale, scale);
-                liquid.material.opacity = Math.min(0.85, opacity);
+                liquid.material.opacity = Math.min(0.95, opacity);
                 if(scale >= 1) clearInterval(fillInterval);
             }, 40);
             
@@ -912,7 +913,8 @@
             state.catalystAdded = true;
             
             // Visual effect: liquid becomes slightly more yellowish due to catalyst
-            liquid.material.color.setHex(0xf5f5dc); // Beige/cream color
+            liquid.material.color.setHex(0xfff8dc); // Cornsilk color (more yellow)
+            liquid.material.emissive.setHex(0x8b7355); // Warm glow
             
             e.target.disabled = true;
             e.target.innerHTML = '<i class="fa-solid fa-check mr-2"></i>Catalyst Added';
